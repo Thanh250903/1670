@@ -13,32 +13,32 @@ namespace BookShoppingCartMvcUI.Repositories
             _db = db;
         }
 
-        public async Task<IEnumerable<Genre>> Genres()
+        public async Task<IEnumerable<Category>> Categories()
         {
-            return await _db.Genres.ToListAsync();
+            return await _db.Categories.ToListAsync();
         }
         public async Task<IEnumerable<Book>> GetBooks(string sTerm = "", int genreId = 0)
         {
             sTerm = sTerm.ToLower();
             IEnumerable<Book> books = await (from book in _db.Books
-                         join genre in _db.Genres
-                         on book.GenreId equals genre.Id
-                         where string.IsNullOrWhiteSpace(sTerm) || (book != null && book.BookName.ToLower().StartsWith(sTerm))
+                         join category in _db.Categories
+                         on book.CategoryId equals category.Id
+                         where string.IsNullOrWhiteSpace(sTerm) || (book != null && book.Title.ToLower().StartsWith(sTerm))
                          select new Book
                          {
                              Id = book.Id,
-                             Image = book.Image,
-                             AuthorName = book.AuthorName,
-                             BookName = book.BookName,
-                             GenreId = book.GenreId,
+                             ImageUrl = book.ImageUrl,
+                             Author = book.Author,
+                             Title = book.Title,
+                             CategoryId = book.CategoryId,
                              Price = book.Price,
-                             GenreName = genre.GenreName
+                             CategoryName = category.CategoryName
                          }
                          ).ToListAsync();
             if (genreId > 0)
             {
 
-                books = books.Where(a => a.GenreId == genreId).ToList();
+                books = books.Where(a => a.CategoryId == genreId).ToList();
             }
             return books;
 

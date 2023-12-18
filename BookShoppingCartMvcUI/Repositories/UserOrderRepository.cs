@@ -27,7 +27,7 @@ namespace BookShoppingCartMvcUI.Repositories
                             .Include(x=>x.OrderStatus)
                             .Include(x=>x.OrderDetail)
                             .ThenInclude(x=>x.Book)
-                            .ThenInclude(x=>x.Genre)
+                            .ThenInclude(x=>x.Category)
                             .Where(a=>a.UserId==userId)
                             .ToListAsync();
             return orders;

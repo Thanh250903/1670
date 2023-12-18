@@ -28,11 +28,11 @@ namespace BookShoppingCartMvcUI.Repositories
                 var cart = await GetCart(userId);
                 if (cart is null)
                 {
-                    cart = new ShoppingCart
+                    cart = new Cart
                     {
                         UserId = userId
                     };
-                    _db.ShoppingCarts.Add(cart);
+                    _db.Carts.Add(cart);
                 }
                 _db.SaveChanges();
                 // cart detail section
@@ -95,22 +95,22 @@ namespace BookShoppingCartMvcUI.Repositories
             return cartItemCount;
         }
 
-        public async Task<ShoppingCart> GetUserCart()
+        public async Task<Cart> GetUserCart()
         {
             var userId = GetUserId();
             if (userId == null)
                 throw new Exception("Invalid userid");
-            var shoppingCart = await _db.ShoppingCarts
+            var shoppingCart = await _db.Carts
                                   .Include(a => a.CartDetails)
                                   .ThenInclude(a => a.Book)
-                                  .ThenInclude(a => a.Genre)
+                                  .ThenInclude(a => a.Category)
                                   .Where(a => a.UserId == userId).FirstOrDefaultAsync();
             return shoppingCart;
 
         }
-        public async Task<ShoppingCart> GetCart(string userId)
+        public async Task<Cart> GetCart(string userId)
         {
-            var cart = await _db.ShoppingCarts.FirstOrDefaultAsync(x => x.UserId == userId);
+            var cart = await _db.Carts.FirstOrDefaultAsync(x => x.UserId == userId);
             return cart;
         }
 
@@ -120,7 +120,7 @@ namespace BookShoppingCartMvcUI.Repositories
             {
                 userId = GetUserId();
             }
-            var data = await (from cart in _db.ShoppingCarts
+            var data = await (from cart in _db.Carts
                               join cartDetail in _db.CartDetails
                               on cart.Id equals cartDetail.ShoppingCartId
                               select new { cartDetail.Id }
